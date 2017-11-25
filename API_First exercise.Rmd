@@ -2,7 +2,7 @@
 title: "API in R"
 output: html_notebook
 ---
-This is the first exercise with API using R. It has been done using Paul Bradshaw's tutorial. 
+This is the first exercise with API using R. It has been done using [Paul Bradshaw's tutorial](https://github.com/paulbradshaw/MED7373-Data-Journalism/blob/master/api/usingpostcodesapi.Rmd). 
 
 # Store the URL
 First, I get the url from the website and I store it as an object
