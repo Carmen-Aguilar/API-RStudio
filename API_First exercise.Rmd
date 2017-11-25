@@ -1,0 +1,138 @@
+---
+title: "API in R"
+output: html_notebook
+---
+This is the first exercise with API using R. It has been done using Paul Bradshaw's tutorial. 
+
+# Store the URL
+First, I get the url from the website and I store it as an object
+```{r}
+url <- "http://api.postcodes.io/postcodes/b422su"
+```
+R asks me to install curl package when running JSON function
+
+```{r}
+install.packages('curl')
+```
+Now run JSON function with the url and the object appear as data in my environment. 
+
+```{r}
+jsoneg <- fromJSON(url)
+```
+
+```{r}
+jsoneg
+```
+# Accessing to one item
+```{r}
+jsoneg[["status"]]
+```
+
+```{r}
+jsoneg[['result']][['codes']][['ccg']]
+```
+
+# Loop
+To use more postcodes I need to create a loop. First, I make a vector with the postcodes I want to use.
+```{r}
+postcodes <- c("B422SU","BL23QQ","B735XJ", "B168JT")
+```
+
+Then, the "for" which is the function for the "loop". That means "for each item stores in the object postcodes pick the value i and print to me"
+```{r}
+for (i in postcodes) { 
+  print(i)
+}
+```
+And adding more details to what we want the function does for us. 
+```{r}
+for (i in postcodes){
+  print(paste("http://api.postcodes.io/postcodes/",i, sep=""))
+}
+```
+# Making more complex
+
+For each item stored in postcodes, pick the url, build one like I point and store it in the object called url. Then, grab this object, run the function fromJSON and store it as jsoneg. And finally, print the details I selected. 
+```{r}
+for (i in postcodes){
+  url <- paste("http://api.postcodes.io/postcodes/",i, sep="")
+  jsoneg <- fromJSON(url)
+  #drill down into one branch and print the value
+  print(jsoneg[['result']][['parliamentary_constituency']])
+}
+```
+# Store the results
+
+```{r}
+#This creates an empty list called 'resultslist'
+resultslist = c()
+for (i in postcodes){
+  url <- paste("http://api.postcodes.io/postcodes/",i, sep="")
+  jsoneg <- fromJSON(url)
+  print(jsoneg[['result']][['parliamentary_constituency']])
+  #This time we store the results of drilling down into part of the JSON
+  constituency <- jsoneg[['result']][['parliamentary_constituency']]
+  #Then we add it to the list
+  resultslist = c(resultslist, constituency)
+}
+```
+
+I want another element to my list in another column
+
+```{r}
+resultslist2 = c()
+for (i in postcodes) {
+  url <- paste("http://api.postcodes.io/postcodes/",i, sep="")
+  jsoneg <- fromJSON(url)
+  print(jsoneg[['result']][['parliamentary_constituency']])
+  constituency <- jsoneg[['result']][['parliamentary_constituency']]
+  print(jsoneg[["result"]][["ccg"]])
+  ccg <- jsoneg[["result"]][["ccg"]]
+  resultslist = c(resultslist, constituency)
+  resultslist2 = c(resultslist2, ccg)
+}
+```
+
+A table with both lists?
+
+```{r}
+data.frame(resultslist, resultslist2)
+```
+
+Changing the names. First, store like an Data object
+```{r}
+table <- data.frame(resultslist, resultslist2)
+```
+Now, change them
+```{r}
+names(table) <- c("Primera", "Segunda")
+View(table)
+```
+
+And store the function
+
+```{r}
+formurls <- function (postcodes) {
+  for (i in postcodes) {
+    url <- paste("http://api.postcodes.io/postcodes/",i, sep="")
+  jsoneg <- fromJSON(url)
+  print(jsoneg[['result']][['parliamentary_constituency']])
+  constituency <- jsoneg[['result']][['parliamentary_constituency']]
+  print(jsoneg[["result"]][["ccg"]])
+  ccg <- jsoneg[["result"]][["ccg"]]
+  resultslist = c(resultslist, constituency)
+  resultslist2 = c(resultslist2, ccg)
+    }
+  }
+```
+Checking the function. First creating a new vector.
+```{r}
+Vicpost <- c("B168JT", "B83QU", "B65JT")
+```
+Using our function
+```{r}
+formurls(Vicpost)
+View(resultslist)
+
+```
+
